@@ -1,8 +1,6 @@
 
-
 package com.basics.ReviseSpringBasics.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude; // Move this to DTO ideally, but ok here if you insist
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,27 +13,20 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @MappedSuperclass
-// Keep this listener ONLY for 'createdBy' and 'modifiedBy'
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseClass {
 
-    // --- DATES (Manual Control) ---
-
-    // Remove @CreatedDate so Spring doesn't touch it automatically
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    // Remove @LastModifiedDate so Spring doesn't touch it automatically
     private LocalDateTime modifiedAt;
-
-    // --- USERS (Let Spring Handle This) ---
 
     @CreatedBy
     @Column(updatable = false)
     private String createdBy;
 
     @LastModifiedBy
-    private String modifiedBy; // Allow this to update normally
+    private String modifiedBy;
 
     // --- LIFECYCLE HOOKS ---
 
@@ -52,3 +43,63 @@ public abstract class BaseClass {
         this.modifiedAt = LocalDateTime.now();
     }
 }
+
+
+
+
+
+
+
+
+
+
+// with simple life cycle hooks
+
+//
+//package com.basics.ReviseSpringBasics.entity;
+//
+//import jakarta.persistence.*;
+//import lombok.Getter;
+//import lombok.Setter;
+//
+//import java.time.LocalDateTime;
+//
+//@Getter
+//@Setter
+//@MappedSuperclass
+//public abstract class BaseClass {
+//
+//    @Column(updatable = false)
+//    private LocalDateTime createdAt;
+//
+//    @Column(updatable = false)
+//    private String createdBy;
+//
+//    private LocalDateTime modifiedAt;
+//
+//    private String modifiedBy;
+//
+//    // --- LIFECYCLE HOOKS ---
+//
+//    @PrePersist
+//    public void onCreate() {
+//        this.createdAt = LocalDateTime.now();
+//        this.createdBy = getCurrentUser();
+//
+//        this.modifiedAt = null;
+//        this.modifiedBy = null;
+//    }
+//
+//
+//    @PreUpdate
+//    public void onUpdate() {
+//        this.modifiedAt = LocalDateTime.now();
+//        this.modifiedBy = getCurrentUser();
+//    }
+//
+//
+//    private String getCurrentUser() {
+//        // return SecurityContextHolder.getContext().getAuthentication().getName();
+//        return "system";
+//    }
+//}
