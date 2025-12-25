@@ -10,8 +10,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@ToString
-@ToString(callSuper = true)
 public class Student extends BaseClass{
 
     @Id
@@ -20,8 +18,13 @@ public class Student extends BaseClass{
 
     @Column(name="name")
     private String name;
+
     @Column(name="college_name")
     private String collegeName;
+
     @Column(name="marks")
     private Float marks;
+
+    @Column(name="student_rank")
+    private Long rank;
 }
