@@ -4,6 +4,7 @@ import com.basics.ReviseSpringBasics.co.StudentCO;
 import com.basics.ReviseSpringBasics.dto.StudentDTO;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -34,6 +35,8 @@ public interface StudentService {
     List<StudentDTO> searchStudentByTheirName(String name);
 
     List<StudentDTO> searchStudentByTheirMarksUsingPagination(int pageNo,int pageLength,String sortDir,Float marks);
+
+    List<StudentDTO> findByStudentWhoseStartingDateAfter(LocalDate startingDate);
 
 
 

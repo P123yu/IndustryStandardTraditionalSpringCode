@@ -1,4 +1,3 @@
-
 package com.basics.ReviseSpringBasics.entity;
 
 import jakarta.persistence.*;

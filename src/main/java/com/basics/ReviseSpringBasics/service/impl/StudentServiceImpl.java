@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -136,10 +137,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentDTO> searchStudentByTheirMarksUsingPagination(
-            int pageNo,
-            int pageLength,
-            String sortDir,
-            Float marks
+            int pageNo, int pageLength, String sortDir, Float marks
     ) {
         return Optional.ofNullable(marks)
                 .map(m -> {
@@ -155,6 +153,13 @@ public class StudentServiceImpl implements StudentService {
                 .orElseGet(List::of);
     }
 
+    @Override
+    public List<StudentDTO> findByStudentWhoseStartingDateAfter(LocalDate startingDate) {
+        return Optional.ofNullable(startingDate)
+                .map(studentRepository::findByStartingDateAfter)
+                .map(studentMapper::entityListToDTOList)
+                .orElseGet(List::of);
+    }
 
 
 //    @Override
@@ -169,59 +174,3 @@ public class StudentServiceImpl implements StudentService {
 
 }
 
-
-
-
-
-//    @Override
-//    public StudentDTO createStudent(StudentCO studentCO) {
-//        Student student=studentMapper.coToEntity(studentCO);
-//        student=studentRepository.save(student);
-//        return studentMapper.entityToDTO(student);
-//    }
-
-
-
-//    @Override
-//    public List<StudentDTO> findAllStudentsByCollegeName(String collegeName) {
-//        List<Student> students=studentRepository.findByCollegeName(collegeName);
-//        return studentMapper.entityListToDTOList(students);
-//    }
-
-
-//    @Override
-//    public List<StudentDTO> findAllStudentsByCollegeName(String collegeName) {
-//        return studentRepository.findByCollegeName(collegeName).stream()
-//                .map(studentMapper::entityToDTO)
-//                .toList();
-//    }
-
-
-//    @Override
-//    public StudentDTO updateStudent(Long id, StudentCO studentCO) {
-//        boolean isStudentExists=studentRepository.existsById(id);
-//        if(!isStudentExists){
-//            return null;
-//        }
-//        studentCO.setId(id);
-//        Student student=studentMapper.coToEntity(studentCO);
-//        student=studentRepository.save(student);
-//        return studentMapper.entityToDTO(student);
-//    }
-
-
-//
-//    @Override
-//    public List<StudentDTO> readAllStudent() {
-//        List<Student> students=studentRepository.findAll();
-//        return studentMapper.entityListToDTOList(students);
-//    }
-
-
-
-//    @Override
-//    public StudentDTO readStudentById(Long id) {
-//        Student student=studentRepository.findById(id)
-//                .orElseThrow(()->new UserNotFoundException("not found"));
-//        return studentMapper.entityToDTO(student);
-//    }

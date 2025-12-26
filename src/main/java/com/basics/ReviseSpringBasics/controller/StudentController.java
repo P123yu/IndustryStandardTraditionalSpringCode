@@ -5,11 +5,13 @@ import com.basics.ReviseSpringBasics.dto.StudentDTO;
 import com.basics.ReviseSpringBasics.service.StudentService;
 import com.basics.ReviseSpringBasics.util.Constant;
 import com.basics.ReviseSpringBasics.util.ResponseUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +19,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/student")
 @RequiredArgsConstructor
+@CrossOrigin
 public class StudentController {
 
     private final StudentService studentService;
 
-
     @PostMapping(Constant.CREATE_URL)
-    public ResponseEntity<ResponseUtil>createStudent(@RequestBody StudentCO studentCO){
+    public ResponseEntity<ResponseUtil>createStudent(@RequestBody @Valid StudentCO studentCO){
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ResponseUtil.builder().status(HttpStatus.CREATED.value())
                         .success(true).message(Constant.CREATE)
@@ -140,9 +142,9 @@ public class StudentController {
 
     @GetMapping(Constant.READ_URL+"/searchNameUsingPagination")
     public ResponseEntity<ResponseUtil> searchStudentByTheirMarksUsingPagination(
-            @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageLength,
-            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false , defaultValue = "0") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int pageLength,
+            @RequestParam(required = false, defaultValue = "desc") String sortDir,
             @RequestParam Float marks) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ResponseUtil.builder()
@@ -153,38 +155,15 @@ public class StudentController {
     }
 
 
-
-
+    @GetMapping(Constant.READ_URL+"/afterStartingDate")
+    public ResponseEntity<ResponseUtil> findByStudentWhoseStartingDateAfter(
+            @RequestParam LocalDate startingDate){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseUtil.builder()
+                        .status(HttpStatus.OK.value()).message(Constant.READ)
+                        .success(true).data(studentService.findByStudentWhoseStartingDateAfter(startingDate)).build()
+        );
+    }
 
 }
 
-
-
-
-
-
-
-//    @PostMapping(Constant.CREATE_URL)
-//    public ResponseEntity<?>createStudent(@RequestBody StudentCO studentCO){
-//        StudentDTO studentDTO=studentService.createStudent(studentCO);
-//        ResponseUtil responseUtil=ResponseUtil.builder().status(HttpStatus.CREATED.value())
-//                .success(true).message(Constant.CREATE).data(studentDTO).build();
-//        return ResponseEntity.status(HttpStatus.CREATED).body(responseUtil);
-//    }
-
-
-//    @PutMapping(Constant.UPDATE_URL+"/{id}")
-//    public ResponseEntity<ResponseUtil>updateStudent(@PathVariable Long id, @RequestBody StudentCO studentCO){
-//        StudentDTO studentDTO=studentService.updateStudent(id,studentCO);
-//        ResponseUtil responseUtil=ResponseUtil.builder().status(HttpStatus.OK.value())
-//                .success(true).message(Constant.UPDATE).data(studentDTO).build();
-//        return ResponseEntity.status(HttpStatus.OK).body(responseUtil);
-//    }
-
-//    @GetMapping(Constant.READ_URL)
-//    public ResponseEntity<ResponseUtil>readAllStudent(){
-//        List<StudentDTO> studentDTOS=studentService.readAllStudent();
-//        ResponseUtil responseUtil=ResponseUtil.builder().status(HttpStatus.OK.value())
-//                .message(Constant.READ).success(true).data(studentDTOS).build();
-//        return ResponseEntity.status(HttpStatus.OK).body(responseUtil);
-//    }
