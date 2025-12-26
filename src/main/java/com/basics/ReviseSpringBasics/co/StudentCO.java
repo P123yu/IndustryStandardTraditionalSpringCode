@@ -54,7 +54,6 @@ public class StudentCO {
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 //    private LocalDate startingDate;
 
-
 //@Schema(
 //        description = "Student Rank (Must be unique)", minimum = "1", maximum = "1000", example = "5"
 //)
