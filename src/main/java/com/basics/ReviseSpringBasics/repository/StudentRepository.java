@@ -33,4 +33,24 @@ public interface StudentRepository extends JpaRepository<Student,Long> {
 
     List<Student> findByStartingDateAfter(LocalDate startingDate);
 
+
+//    // starting_date <= fromDate AND ending_date >= toDate
+//    List<Student> findByStartingDateLessThanEqualAndEndingDateGreaterThanEqual(
+//            LocalDate startingDate,
+//            LocalDate endingDate
+//    );
+
+
+//    SELECT *
+//    FROM student
+//    WHERE starting_date < :fromDate
+//    AND ending_date > :toDate;
+
+    List<Student> findByStartingDateBeforeAndEndingDateAfter(
+            LocalDate fromDate,
+            LocalDate toDate
+    );
+
+
+
 }

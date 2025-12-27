@@ -39,6 +39,10 @@ public interface StudentService {
     List<StudentDTO> findByStudentWhoseStartingDateAfter(LocalDate startingDate);
 
 
+    List<StudentDTO> findStudentByStartingDateBeforeAndEndingDateAfter(LocalDate startingDate,LocalDate endingDate);
+
+
+
 
 
 }

@@ -19,4 +19,8 @@ public class StudentDTO extends BaseDTO{
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate startingDate;
+
+    private String imageName;
+    private String imageDataBase64;
+    private String imageType;
 }

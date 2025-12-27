@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Student extends BaseClass{
 
     @Id
@@ -39,4 +40,13 @@ public class Student extends BaseClass{
 
     @Column(name="ending_date")
     private LocalDate endingDate;
+
+    @Column(name="image_name",length=500)
+    private String imageName;
+
+    @Column(name="image_data",columnDefinition = "BYTEA")
+    private byte[] imageData;
+
+    @Column(name="image_type")
+    private String imageType;
 }

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -43,6 +44,8 @@ public class StudentCO {
     @Schema(type = "string", pattern = "dd-MM-yyyy", example = "26-12-2025")
     private LocalDate startingDate;
 
+    @Schema(type = "string", format = "binary")
+    private MultipartFile imageFile;
 
 }
 

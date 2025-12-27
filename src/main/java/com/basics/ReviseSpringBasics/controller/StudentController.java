@@ -8,6 +8,7 @@ import com.basics.ReviseSpringBasics.util.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,11 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    @PostMapping(Constant.CREATE_URL)
-    public ResponseEntity<ResponseUtil>createStudent(@RequestBody @Valid StudentCO studentCO){
+//    @PostMapping(Constant.CREATE_URL)
+//    public ResponseEntity<ResponseUtil>createStudent(@RequestBody @Valid StudentCO studentCO){
+
+    @PostMapping(value = Constant.CREATE_URL, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseUtil>createStudent(@ModelAttribute @Valid StudentCO studentCO){
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ResponseUtil.builder().status(HttpStatus.CREATED.value())
                         .success(true).message(Constant.CREATE)
@@ -164,6 +168,19 @@ public class StudentController {
                         .success(true).data(studentService.findByStudentWhoseStartingDateAfter(startingDate)).build()
         );
     }
+
+
+    @GetMapping(Constant.READ_URL+"/dateBetween")
+    public ResponseEntity<ResponseUtil> findStudentByStartingDateBeforeAndEndingDateAfter(
+            @RequestParam LocalDate startingDate,
+            @RequestParam LocalDate endingDate){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseUtil.builder()
+                        .status(HttpStatus.OK.value()).message(Constant.READ)
+                        .success(true).data(studentService.findStudentByStartingDateBeforeAndEndingDateAfter(startingDate,endingDate)).build()
+        );
+    }
+
 
 }
 

@@ -2,6 +2,7 @@ package com.basics.ReviseSpringBasics.service.impl;
 
 import com.basics.ReviseSpringBasics.co.StudentCO;
 import com.basics.ReviseSpringBasics.dto.StudentDTO;
+import com.basics.ReviseSpringBasics.entity.Student;
 import com.basics.ReviseSpringBasics.exception.UserNotFoundException;
 import com.basics.ReviseSpringBasics.mapper.StudentMapper;
 import com.basics.ReviseSpringBasics.repository.StudentRepository;
@@ -11,7 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -24,13 +27,36 @@ public class StudentServiceImpl implements StudentService {
     private final StudentMapper studentMapper;
 
 
+//    @Override
+//    public StudentDTO createStudent(StudentCO studentCO) {
+//       return Optional.ofNullable(studentCO)
+//               .map(studentMapper::coToEntity)
+//               .map(studentRepository::save)
+//               .map(studentMapper::entityToDTO)
+//               .orElseThrow(()->new UserNotFoundException("empty object"));
+//    }
+
+
     @Override
-    public StudentDTO createStudent(StudentCO studentCO) {
-       return Optional.ofNullable(studentCO)
-               .map(studentMapper::coToEntity)
-               .map(studentRepository::save)
-               .map(studentMapper::entityToDTO)
-               .orElseThrow(()->new UserNotFoundException("empty object"));
+    public StudentDTO createStudent(StudentCO studentCO){
+        return Optional.ofNullable(studentCO)
+                .map(studentMapper::coToEntity)
+                .map(entity->{
+                    MultipartFile file= studentCO.getImageFile();
+                    return Optional.ofNullable(file).map(f->{
+                        try {
+                            entity.setImageName(f.getOriginalFilename());
+                            entity.setImageData(f.getBytes());
+                            entity.setImageType(f.getContentType());
+                            return entity;
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).orElse(null);
+                })
+                .map(studentRepository::save)
+                .map(studentMapper::entityToDTO)
+                .orElseThrow(()->new UserNotFoundException("empty object"));
     }
 
 
@@ -157,6 +183,16 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentDTO> findByStudentWhoseStartingDateAfter(LocalDate startingDate) {
         return Optional.ofNullable(startingDate)
                 .map(studentRepository::findByStartingDateAfter)
+                .map(studentMapper::entityListToDTOList)
+                .orElseGet(List::of);
+    }
+
+    @Override
+    public List<StudentDTO> findStudentByStartingDateBeforeAndEndingDateAfter(LocalDate startingDate,LocalDate endingDate) {
+        return Optional.ofNullable(startingDate)
+                .filter(startDate -> endingDate != null)
+                .map(startDate -> studentRepository
+                        .findByStartingDateBeforeAndEndingDateAfter(startDate,endingDate))
                 .map(studentMapper::entityListToDTOList)
                 .orElseGet(List::of);
     }
