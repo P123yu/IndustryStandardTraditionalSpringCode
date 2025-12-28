@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+//import java.util.List;
 
 @Getter
 @Setter
@@ -44,8 +45,15 @@ public class StudentCO {
     @Schema(type = "string", pattern = "dd-MM-yyyy", example = "26-12-2025")
     private LocalDate startingDate;
 
-    @Schema(type = "string", format = "binary")
+//    @Schema(type = "string", format = "binary")
+//    private MultipartFile imageFile;
+
+    @Schema(type = "string", format = "binary", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private MultipartFile imageFile;
+
+
+    // for sending list of files
+    // private List<MultipartFile> imageFiles;
 
 }
 
@@ -60,3 +68,5 @@ public class StudentCO {
 //@Schema(
 //        description = "Student Rank (Must be unique)", minimum = "1", maximum = "1000", example = "5"
 //)
+
+

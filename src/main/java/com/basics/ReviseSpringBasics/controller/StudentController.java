@@ -2,11 +2,16 @@ package com.basics.ReviseSpringBasics.controller;
 
 import com.basics.ReviseSpringBasics.co.StudentCO;
 import com.basics.ReviseSpringBasics.dto.StudentDTO;
+import com.basics.ReviseSpringBasics.entity.Student;
 import com.basics.ReviseSpringBasics.service.StudentService;
+import com.basics.ReviseSpringBasics.specification.StudentSpecification;
 import com.basics.ReviseSpringBasics.util.Constant;
 import com.basics.ReviseSpringBasics.util.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -178,6 +183,35 @@ public class StudentController {
                 ResponseUtil.builder()
                         .status(HttpStatus.OK.value()).message(Constant.READ)
                         .success(true).data(studentService.findStudentByStartingDateBeforeAndEndingDateAfter(startingDate,endingDate)).build()
+        );
+    }
+
+
+
+//    @GetMapping(Constant.READ_URL+"/apply")
+//    public ResponseEntity<ResponseUtil> fetchAllStudent(
+//            @RequestParam (required = false,defaultValue="0") int pageNo,
+//            @RequestParam (required = false,defaultValue="0") int pageSize,
+//            @RequestParam String search) {
+//        return ResponseEntity.status(HttpStatus.OK).body(
+//                ResponseUtil.builder()
+//                        .status(HttpStatus.OK.value()).message(Constant.READ)
+//                        .success(true).data(studentService.fetchAllStudent(pageNo,pageSize,search)).build()
+//        );
+//    }
+
+
+    @GetMapping(Constant.READ_URL+"/apply")
+    public ResponseEntity<ResponseUtil> fetchAllStudent(
+            @RequestParam (required = false,defaultValue="0") int pageNo,
+            @RequestParam (required = false,defaultValue="10") int pageSize,
+            @RequestParam (required = false,defaultValue="id") String sortBy,
+            @RequestParam (required = false,defaultValue="desc") String sortDir,
+            @RequestParam (required = false) String search) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseUtil.builder()
+                        .status(HttpStatus.OK.value()).message(Constant.READ)
+                        .success(true).data(studentService.fetchAllStudent(pageNo,pageSize,sortBy,sortDir,search)).build()
         );
     }
 

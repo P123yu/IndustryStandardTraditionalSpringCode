@@ -43,6 +43,15 @@ public interface StudentService {
 
 
 
+    // search (filter) and pagination
+
+//    List<StudentDTO> fetchAllStudent(int pageNo, int pageSize, String search);
+
+      List<StudentDTO> fetchAllStudent(int pageNo, int pageSize, String sortBy,String sortDir, String search);
+
+
+
+
 
 
 }

@@ -7,10 +7,12 @@ import com.basics.ReviseSpringBasics.exception.UserNotFoundException;
 import com.basics.ReviseSpringBasics.mapper.StudentMapper;
 import com.basics.ReviseSpringBasics.repository.StudentRepository;
 import com.basics.ReviseSpringBasics.service.StudentService;
+import com.basics.ReviseSpringBasics.specification.StudentSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,18 +43,19 @@ public class StudentServiceImpl implements StudentService {
     public StudentDTO createStudent(StudentCO studentCO){
         return Optional.ofNullable(studentCO)
                 .map(studentMapper::coToEntity)
-                .map(entity->{
-                    MultipartFile file= studentCO.getImageFile();
-                    return Optional.ofNullable(file).map(f->{
-                        try {
-                            entity.setImageName(f.getOriginalFilename());
-                            entity.setImageData(f.getBytes());
-                            entity.setImageType(f.getContentType());
-                            return entity;
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).orElse(null);
+                .map(entity -> {
+                    Optional.ofNullable(studentCO.getImageFile())
+                            .filter(f -> !f.isEmpty())
+                            .ifPresent(f -> {
+                                try {
+                                    entity.setImageName(f.getOriginalFilename());
+                                    entity.setImageData(f.getBytes());
+                                    entity.setImageType(f.getContentType());
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                    return entity;
                 })
                 .map(studentRepository::save)
                 .map(studentMapper::entityToDTO)
@@ -195,6 +198,26 @@ public class StudentServiceImpl implements StudentService {
                         .findByStartingDateBeforeAndEndingDateAfter(startDate,endingDate))
                 .map(studentMapper::entityListToDTOList)
                 .orElseGet(List::of);
+    }
+
+//    @Override
+//    public List<StudentDTO> fetchAllStudent(int pageNo, int pageSize, String search) {
+//        Pageable pageable= PageRequest.of(pageNo,pageSize);
+//        Specification<Student> spec= StudentSpecification.getSpecification(search);
+//        List<Student> studentList =studentRepository.findAll(spec,pageable).getContent();
+//        return studentMapper.entityListToDTOList(studentList);
+//    }
+
+
+    @Override
+    public List<StudentDTO> fetchAllStudent(int pageNo, int pageSize, String sortBy,String sortDir, String search) {
+        Specification<Student> spec= StudentSpecification.getSpecification(search);
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable= PageRequest.of(pageNo,pageSize,sort);
+        List<Student> studentList =studentRepository.findAll(spec,pageable).getContent();
+        return studentMapper.entityListToDTOList(studentList);
     }
 
 
